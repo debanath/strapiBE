@@ -590,6 +590,53 @@ export interface PluginContentReleasesReleaseAction
   };
 }
 
+export interface PluginI18NLocale extends Schema.CollectionType {
+  collectionName: 'i18n_locale';
+  info: {
+    singularName: 'locale';
+    pluralName: 'locales';
+    collectionName: 'locales';
+    displayName: 'Locale';
+    description: '';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  pluginOptions: {
+    'content-manager': {
+      visible: false;
+    };
+    'content-type-builder': {
+      visible: false;
+    };
+  };
+  attributes: {
+    name: Attribute.String &
+      Attribute.SetMinMax<
+        {
+          min: 1;
+          max: 50;
+        },
+        number
+      >;
+    code: Attribute.String & Attribute.Unique;
+    createdAt: Attribute.DateTime;
+    updatedAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<
+      'plugin::i18n.locale',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    updatedBy: Attribute.Relation<
+      'plugin::i18n.locale',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+  };
+}
+
 export interface PluginUsersPermissionsPermission
   extends Schema.CollectionType {
   collectionName: 'up_permissions';
@@ -741,46 +788,330 @@ export interface PluginUsersPermissionsUser extends Schema.CollectionType {
   };
 }
 
-export interface PluginI18NLocale extends Schema.CollectionType {
-  collectionName: 'i18n_locale';
+export interface ApiChannelChannel extends Schema.CollectionType {
+  collectionName: 'channels';
   info: {
-    singularName: 'locale';
-    pluralName: 'locales';
-    collectionName: 'locales';
-    displayName: 'Locale';
-    description: '';
+    singularName: 'channel';
+    pluralName: 'channels';
+    displayName: 'Channel';
   };
   options: {
-    draftAndPublish: false;
-  };
-  pluginOptions: {
-    'content-manager': {
-      visible: false;
-    };
-    'content-type-builder': {
-      visible: false;
-    };
+    draftAndPublish: true;
   };
   attributes: {
-    name: Attribute.String &
-      Attribute.SetMinMax<
-        {
-          min: 1;
-          max: 50;
-        },
-        number
-      >;
-    code: Attribute.String & Attribute.Unique;
+    name: Attribute.String;
+    type: Attribute.Enumeration<['TEXT', 'AUDIO', 'VIDEO']>;
+    member: Attribute.Relation<
+      'api::channel.channel',
+      'oneToMany',
+      'api::conversation.conversation'
+    >;
+    Member: Attribute.Relation<
+      'api::channel.channel',
+      'oneToMany',
+      'api::conversation.conversation'
+    >;
+    DirectMessage: Attribute.Relation<
+      'api::channel.channel',
+      'manyToOne',
+      'api::conversation.conversation'
+    >;
+    Members: Attribute.Relation<
+      'api::channel.channel',
+      'oneToMany',
+      'api::direct-message.direct-message'
+    >;
+    Conversation: Attribute.Relation<
+      'api::channel.channel',
+      'oneToMany',
+      'api::direct-message.direct-message'
+    >;
+    Channel: Attribute.Relation<
+      'api::channel.channel',
+      'manyToOne',
+      'api::profile.profile'
+    >;
+    Channels: Attribute.Relation<
+      'api::channel.channel',
+      'manyToOne',
+      'api::server.server'
+    >;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
+    publishedAt: Attribute.DateTime;
     createdBy: Attribute.Relation<
-      'plugin::i18n.locale',
+      'api::channel.channel',
       'oneToOne',
       'admin::user'
     > &
       Attribute.Private;
     updatedBy: Attribute.Relation<
-      'plugin::i18n.locale',
+      'api::channel.channel',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+  };
+}
+
+export interface ApiConversationConversation extends Schema.CollectionType {
+  collectionName: 'conversations';
+  info: {
+    singularName: 'conversation';
+    pluralName: 'conversations';
+    displayName: 'Conversation';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    memberOne: Attribute.Relation<
+      'api::conversation.conversation',
+      'manyToOne',
+      'api::channel.channel'
+    >;
+    member_two: Attribute.Relation<
+      'api::conversation.conversation',
+      'manyToOne',
+      'api::channel.channel'
+    >;
+    direct_messages: Attribute.Relation<
+      'api::conversation.conversation',
+      'oneToMany',
+      'api::channel.channel'
+    >;
+    createdAt: Attribute.DateTime;
+    updatedAt: Attribute.DateTime;
+    publishedAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<
+      'api::conversation.conversation',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    updatedBy: Attribute.Relation<
+      'api::conversation.conversation',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+  };
+}
+
+export interface ApiDirectMessageDirectMessage extends Schema.CollectionType {
+  collectionName: 'direct_messages';
+  info: {
+    singularName: 'direct-message';
+    pluralName: 'direct-messages';
+    displayName: 'DirectMessage';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    content: Attribute.Blocks;
+    fileUrl: Attribute.Blocks;
+    deleted: Attribute.Boolean;
+    member: Attribute.Relation<
+      'api::direct-message.direct-message',
+      'manyToOne',
+      'api::channel.channel'
+    >;
+    conversation: Attribute.Relation<
+      'api::direct-message.direct-message',
+      'manyToOne',
+      'api::channel.channel'
+    >;
+    createdAt: Attribute.DateTime;
+    updatedAt: Attribute.DateTime;
+    publishedAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<
+      'api::direct-message.direct-message',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    updatedBy: Attribute.Relation<
+      'api::direct-message.direct-message',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+  };
+}
+
+export interface ApiMemberMember extends Schema.CollectionType {
+  collectionName: 'members';
+  info: {
+    singularName: 'member';
+    pluralName: 'members';
+    displayName: 'Member';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    role: Attribute.Enumeration<['ADMIN', 'MODERATOR', 'GUEST']>;
+    Members: Attribute.Relation<
+      'api::member.member',
+      'manyToOne',
+      'api::profile.profile'
+    >;
+    Member: Attribute.Relation<
+      'api::member.member',
+      'manyToOne',
+      'api::server.server'
+    >;
+    createdAt: Attribute.DateTime;
+    updatedAt: Attribute.DateTime;
+    publishedAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<
+      'api::member.member',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    updatedBy: Attribute.Relation<
+      'api::member.member',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+  };
+}
+
+export interface ApiMessageMessage extends Schema.CollectionType {
+  collectionName: 'messages';
+  info: {
+    singularName: 'message';
+    pluralName: 'messages';
+    displayName: 'Message';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    content: Attribute.Blocks;
+    fileUrl: Attribute.Blocks;
+    deleted: Attribute.Boolean;
+    createdAt: Attribute.DateTime;
+    updatedAt: Attribute.DateTime;
+    publishedAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<
+      'api::message.message',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    updatedBy: Attribute.Relation<
+      'api::message.message',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+  };
+}
+
+export interface ApiProfileProfile extends Schema.CollectionType {
+  collectionName: 'profiles';
+  info: {
+    singularName: 'profile';
+    pluralName: 'profiles';
+    displayName: 'Profile';
+    description: '';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    userId: Attribute.String & Attribute.Unique;
+    name: Attribute.String;
+    imageUrl: Attribute.Text;
+    email: Attribute.Email;
+    servers: Attribute.Relation<
+      'api::profile.profile',
+      'oneToMany',
+      'api::server.server'
+    >;
+    members: Attribute.Relation<
+      'api::profile.profile',
+      'oneToMany',
+      'api::member.member'
+    >;
+    channels: Attribute.Relation<
+      'api::profile.profile',
+      'oneToMany',
+      'api::channel.channel'
+    >;
+    Profile: Attribute.Relation<
+      'api::profile.profile',
+      'oneToMany',
+      'api::server.server'
+    >;
+    createdAt: Attribute.DateTime;
+    updatedAt: Attribute.DateTime;
+    publishedAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<
+      'api::profile.profile',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    updatedBy: Attribute.Relation<
+      'api::profile.profile',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+  };
+}
+
+export interface ApiServerServer extends Schema.CollectionType {
+  collectionName: 'servers';
+  info: {
+    singularName: 'server';
+    pluralName: 'servers';
+    displayName: 'Server';
+    description: '';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    name: Attribute.String;
+    imageUrl: Attribute.Blocks;
+    inviteCode: Attribute.String & Attribute.Unique;
+    Server: Attribute.Relation<
+      'api::server.server',
+      'manyToOne',
+      'api::profile.profile'
+    >;
+    profile: Attribute.Relation<
+      'api::server.server',
+      'manyToOne',
+      'api::profile.profile'
+    >;
+    members: Attribute.Relation<
+      'api::server.server',
+      'oneToMany',
+      'api::member.member'
+    >;
+    channels: Attribute.Relation<
+      'api::server.server',
+      'oneToMany',
+      'api::channel.channel'
+    >;
+    createdAt: Attribute.DateTime;
+    updatedAt: Attribute.DateTime;
+    publishedAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<
+      'api::server.server',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    updatedBy: Attribute.Relation<
+      'api::server.server',
       'oneToOne',
       'admin::user'
     > &
@@ -802,10 +1133,17 @@ declare module '@strapi/types' {
       'plugin::upload.folder': PluginUploadFolder;
       'plugin::content-releases.release': PluginContentReleasesRelease;
       'plugin::content-releases.release-action': PluginContentReleasesReleaseAction;
+      'plugin::i18n.locale': PluginI18NLocale;
       'plugin::users-permissions.permission': PluginUsersPermissionsPermission;
       'plugin::users-permissions.role': PluginUsersPermissionsRole;
       'plugin::users-permissions.user': PluginUsersPermissionsUser;
-      'plugin::i18n.locale': PluginI18NLocale;
+      'api::channel.channel': ApiChannelChannel;
+      'api::conversation.conversation': ApiConversationConversation;
+      'api::direct-message.direct-message': ApiDirectMessageDirectMessage;
+      'api::member.member': ApiMemberMember;
+      'api::message.message': ApiMessageMessage;
+      'api::profile.profile': ApiProfileProfile;
+      'api::server.server': ApiServerServer;
     }
   }
 }

@@ -1,0 +1,68 @@
+{
+  "kind": "collectionType",
+  "collectionName": "channels",
+  "info": {
+    "singularName": "channel",
+    "pluralName": "channels",
+    "displayName": "Channel"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "name": {
+      "type": "string"
+    },
+    "type": {
+      "type": "enumeration",
+      "enum": [
+        "TEXT",
+        "AUDIO",
+        "VIDEO"
+      ]
+    },
+    "member": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::conversation.conversation",
+      "mappedBy": "memberOne"
+    },
+    "Member": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::conversation.conversation",
+      "mappedBy": "member_two"
+    },
+    "DirectMessage": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::conversation.conversation",
+      "inversedBy": "direct_messages"
+    },
+    "Members": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::direct-message.direct-message",
+      "mappedBy": "member"
+    },
+    "Conversation": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::direct-message.direct-message",
+      "mappedBy": "conversation"
+    },
+    "Channel": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::profile.profile",
+      "inversedBy": "channels"
+    },
+    "Channels": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::server.server",
+      "inversedBy": "channels"
+    }
+  }
+}

@@ -1,0 +1,50 @@
+{
+  "kind": "collectionType",
+  "collectionName": "servers",
+  "info": {
+    "singularName": "server",
+    "pluralName": "servers",
+    "displayName": "Server",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "name": {
+      "type": "string"
+    },
+    "imageUrl": {
+      "type": "blocks"
+    },
+    "inviteCode": {
+      "type": "string",
+      "unique": true
+    },
+    "Server": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::profile.profile",
+      "inversedBy": "servers"
+    },
+    "profile": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::profile.profile",
+      "inversedBy": "Profile"
+    },
+    "members": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::member.member",
+      "mappedBy": "Member"
+    },
+    "channels": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::channel.channel",
+      "mappedBy": "Channels"
+    }
+  }
+}

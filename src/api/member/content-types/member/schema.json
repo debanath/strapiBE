@@ -1,0 +1,35 @@
+{
+  "kind": "collectionType",
+  "collectionName": "members",
+  "info": {
+    "singularName": "member",
+    "pluralName": "members",
+    "displayName": "Member"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "role": {
+      "type": "enumeration",
+      "enum": [
+        "ADMIN",
+        "MODERATOR",
+        "GUEST"
+      ]
+    },
+    "Members": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::profile.profile",
+      "inversedBy": "members"
+    },
+    "Member": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::server.server",
+      "inversedBy": "members"
+    }
+  }
+}
